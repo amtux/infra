@@ -1,3 +1,3 @@
 #!/bin/sh
 set -eux
-docker-compose -f plex.yml up -d
+docker compose -f plex.yml up -d
