@@ -2,19 +2,19 @@
 version: "2.1"
 services:
   plex:
-    image: lscr.io/linuxserver/plex:1.28.1
+    image: lscr.io/linuxserver/plex:1.28.2
     container_name: plex
     network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
       - VERSION=docker
-      #- PLEX_CLAIM= #optional
     volumes:
-      - /mnt/freenas/movies:/movies
-      - /mnt/freenas/tv:/tv
-      - /mnt/freenas/youtube:/youtube
-      - /mnt/freenas/anime:/anime
+      - /freenas/media/movies:/movies
+      - /freenas/media/tv:/tv
+      - /freenas/media/generic:/generic
+      - /freenas/media/anime:/anime
+      - /freenas/configs/plex:/config
     devices:
       - /dev/dri:/dev/dri
     restart: unless-stopped
