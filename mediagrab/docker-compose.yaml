@@ -1,0 +1,64 @@
+---
+version: "2.1"
+services:
+  qbitvpn:
+    image: dyonr/qbittorrentvpn
+    container_name: qbitvpn
+    #network_mode: host
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_TYPE=wireguard
+      - LAN_NETWORK=192.168.5.0/24
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8080:8080
+      - 8999:8999
+      - 8999:8999/udp
+    volumes:
+      - /plexmedia/configs/qbitvpn/qbittorrent-config:/config
+      - /plexmedia/configs/qbitvpn/downloads/:/downloads
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - /plexmedia/configs/sonarr/config:/config
+      - /plexmedia/media/tv:/tv
+      - /plexmedia/media/anime:/anime
+      - /plexmedia/configs/qbitvpn/downloads/:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - AUTO_UPDATE=true
+      #- RUN_OPTS=<run options here> #optional
+    volumes:
+      - /plexmedia/configs/jackett/config:/config
+      - /plexmedia/configs/jackett/downloads:/downloads
+    ports:
+      - 9117:9117
+    restart: unless-stopped
+  homer:
+    image: b4bz/homer:latest
+    container_name: homer
+    volumes:
+      - /plexmedia/configs/homer/www-assets:/www/assets
+    ports:
+      - 3000:8080
+    restart: always
